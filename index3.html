@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRÛLÉ — Carte de visite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --espresso:#241712;
+    --espresso-2:#150d0a;
+    --espresso-3:#3a2418;
+    --paper:#f2e8d5;
+    --paper-shadow:#ddcda6;
+    --copper:#b5651d;
+    --copper-dark:#8a4a14;
+    --gold:#c9a227;
+    --gold-soft:#e0c05a;
+    --sage:#6e7458;
+    --ink:#2b1b14;
+    --ink-soft:#5d4c3d;
+    --ink-faint:#8a7862;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  html,body{ height:100%; }
+
+  body{
+    min-height:100%;
+    background:
+      radial-gradient(140% 100% at 50% -20%, #43291a 0%, var(--espresso) 45%, var(--espresso-2) 100%);
+    color:var(--paper);
+    font-family:'Work Sans', sans-serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:56px 16px 40px;
+    overflow-x:hidden;
+  }
+
+  /* counter-top grain */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none;
+    opacity:.05;
+    background-image:
+      repeating-linear-gradient(0deg, #fff 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(90deg, #fff 0 1px, transparent 1px 3px);
+    mix-blend-mode:overlay;
+  }
+
+  /* ================= STAGE / FLIP MECHANICS ================= */
+  .stage{
+    --w: min(88vw, 400px);
+    width:var(--w);
+    aspect-ratio: 1.6 / 1;
+    perspective: 1600px;
+    position:relative;
+  }
+
+  .flip-card{
+    position:relative;
+    width:100%;
+    height:100%;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    opacity:0;
+    transform:translateY(16px) scale(.97);
+    animation:riseIn .7s cubic-bezier(.2,.8,.2,1) .1s forwards;
+  }
+  @keyframes riseIn{ to{opacity:1; transform:translateY(0) scale(1);} }
+
+  .flip-card:focus-visible{ outline:none; }
+  .flip-card:focus-visible .flip-inner{
+    outline:2.5px solid var(--gold-soft);
+    outline-offset:4px;
+    border-radius:20px;
+  }
+
+  .flip-inner{
+    position:relative;
+    width:100%;
+    height:100%;
+    transition:transform .85s cubic-bezier(.2,.7,.2,1);
+    transform-style:preserve-3d;
+    will-change:transform;
+  }
+  .flip-card.tilt .flip-inner{ transform: var(--hover-tilt, none); }
+  .flip-card.flipped .flip-inner{
+    transform: rotateY(180deg) var(--hover-tilt-flipped, none);
+  }
+
+  .face{
+    position:absolute; inset:0;
+    border-radius:20px;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    overflow:hidden;
+    box-shadow:
+      0 30px 50px -18px rgba(0,0,0,.65),
+      0 10px 22px -10px rgba(0,0,0,.5);
+  }
+  .face.back{ transform: rotateY(180deg); }
+
+  @media (prefers-reduced-motion: reduce){
+    .flip-inner{ transition:none; }
+    .flip-card{ animation:none; opacity:1; transform:none; }
+  }
+
+  /* shared coffee-ring watermark: same physical mark, both sides */
+  .ring-stain{
+    position:absolute;
+    width:150px; height:150px;
+    border-radius:50%;
+    border:7px solid rgba(181,101,29,.18);
+    pointer-events:none;
+  }
+  .ring-stain::after{
+    content:"";
+    position:absolute; inset:14px;
+    border-radius:50%;
+    border:2.5px solid rgba(181,101,29,.14);
+  }
+  .front .ring-stain{ top:-46px; right:-40px; border-color:rgba(201,162,39,.16); }
+  .front .ring-stain::after{ border-color:rgba(201,162,39,.12); }
+  .back .ring-stain{ top:-46px; right:-40px; }
+
+  /* ================= FRONT ================= */
+  .front{
+    background:
+      radial-gradient(120% 140% at 78% 0%, rgba(201,162,39,.10), transparent 55%),
+      linear-gradient(155deg, var(--espresso-3) 0%, var(--espresso) 55%, var(--espresso-2) 100%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:clamp(16px,4.5%,26px);
+    text-align:center;
+  }
+
+  .emblem{
+    position:relative;
+    width:clamp(48px,14%,64px);
+    aspect-ratio:1;
+    border-radius:50%;
+    background:radial-gradient(circle at 32% 28%, var(--gold-soft), var(--gold) 55%, var(--copper-dark) 100%);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 16px rgba(0,0,0,.4), inset 0 1px 2px rgba(255,255,255,.4);
+    margin-bottom:clamp(8px,2.4%,14px);
+  }
+  .emblem svg{ width:56%; height:56%; stroke:var(--espresso-2); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+
+  .steam-wrap{ position:absolute; top:-6px; left:50%; width:1px; height:1px; }
+  .steam{
+    position:absolute;
+    width:4px; height:4px;
+    border-radius:50%;
+    background:rgba(255,255,255,.5);
+    filter:blur(3px);
+    opacity:0;
+  }
+  .steam.s1{ left:-9px; animation:rise 3.4s ease-in infinite; }
+  .steam.s2{ left:0px; animation:rise 3.4s ease-in infinite 1.1s; }
+  .steam.s3{ left:9px; animation:rise 3.4s ease-in infinite 2.2s; }
+  @keyframes rise{
+    0%{ transform:translateY(0) scale(1); opacity:0; }
+    18%{ opacity:.6; }
+    75%{ opacity:.2; }
+    100%{ transform:translateY(-30px) scale(2.2); opacity:0; }
+  }
+  @media (prefers-reduced-motion: reduce){ .steam{ animation:none; opacity:0; } }
+
+  .brand{
+    font-family:'Fraunces', serif;
+    font-optical-sizing:auto;
+    font-weight:600;
+    font-size:clamp(26px,7.4vw,36px);
+    letter-spacing:.01em;
+    color:var(--paper);
+    line-height:1;
+  }
+  .tagline{
+    margin-top:6px;
+    font-size:clamp(10.5px,2.6vw,12.5px);
+    color:rgba(242,232,213,.65);
+    font-style:italic;
+  }
+
+  .front-foot{
+    position:absolute;
+    left:0; right:0; bottom:0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 clamp(14px,4%,22px) clamp(10px,3%,16px);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9px;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+    color:rgba(242,232,213,.5);
+  }
+  .flip-hint{
+    display:flex; align-items:center; gap:5px;
+    color:rgba(242,232,213,.7);
+  }
+  .flip-hint svg{ width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2; }
+
+  /* ================= BACK ================= */
+  .back{
+    background:var(--paper);
+    display:flex;
+    flex-direction:column;
+    padding:clamp(14px,4%,22px);
+    color:var(--ink);
+  }
+  .back .ring-stain{ border-color:rgba(110,116,88,.14); }
+  .back .ring-stain::after{ border-color:rgba(110,116,88,.1); }
+
+  .back-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding-bottom:clamp(6px,2%,9px);
+    border-bottom:1.5px dashed rgba(43,27,20,.22);
+  }
+  .back-brand{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(15px,4.2vw,18px);
+    color:var(--ink);
+  }
+  .back-role{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:8.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+  }
+  .avatar{
+    width:clamp(26px,7vw,32px);
+    aspect-ratio:1;
+    border-radius:50%;
+    background:linear-gradient(155deg, var(--copper), var(--copper-dark));
+    color:var(--paper);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces', serif;
+    font-size:clamp(10px,3vw,12px);
+    flex-shrink:0;
+    box-shadow:0 3px 8px rgba(0,0,0,.25);
+  }
+
+  .icon-row{
+    display:flex;
+    justify-content:space-between;
+    padding:clamp(7px,2.2%,11px) 0;
+  }
+  .icon-btn{
+    width:clamp(28px,8vw,34px);
+    aspect-ratio:1;
+    border-radius:50%;
+    background:var(--paper-shadow);
+    display:flex; align-items:center; justify-content:center;
+    text-decoration:none;
+    transition:transform .16s ease, background .16s ease;
+    flex-shrink:0;
+  }
+  .icon-btn svg{ width:48%; height:48%; stroke:var(--copper-dark); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .icon-btn:hover{ background:var(--copper); transform:translateY(-2px); }
+  .icon-btn:hover svg{ stroke:var(--paper); }
+  .icon-btn:focus-visible{ outline:2px solid var(--sage); outline-offset:2px; }
+
+  .info-row{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:clamp(8.5px,2.3vw,9.5px);
+    color:var(--ink-soft);
+    line-height:1.5;
+    padding:clamp(6px,2%,9px) 0;
+    border-top:1.5px dashed rgba(43,27,20,.18);
+  }
+  .info-row .addr{ max-width:58%; }
+  .info-row .hrs{ text-align:right; }
+  .info-row b{ display:block; color:var(--ink); font-weight:600; margin-bottom:1px; }
+
+  .save-btn{
+    margin-top:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    width:100%;
+    padding:clamp(8px,2.6%,11px);
+    background:var(--gold);
+    color:var(--ink);
+    border:none;
+    border-radius:10px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:clamp(9.5px,2.5vw,11px);
+    letter-spacing:.04em;
+    cursor:pointer;
+    transition:background .16s ease, transform .16s ease;
+  }
+  .save-btn:hover{ background:var(--gold-soft); transform:translateY(-1px); }
+  .save-btn:focus-visible{ outline:2px solid var(--sage); outline-offset:2px; }
+  .save-btn svg{ width:13px; height:13px; stroke:var(--ink); fill:none; stroke-width:2; }
+
+  /* ================= AROUND THE CARD ================= */
+  .hint{
+    margin-top:20px;
+    max-width:400px;
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:.03em;
+    line-height:1.5;
+    color:rgba(242,232,213,.45);
+    padding:0 12px;
+  }
+  .hint b{ color:rgba(242,232,213,.75); }
+
+  .toast{
+    position:fixed;
+    left:50%; bottom:26px;
+    transform:translate(-50%, 20px);
+    background:var(--ink);
+    color:var(--paper);
+    padding:11px 18px;
+    border-radius:9px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+    box-shadow:0 10px 24px rgba(0,0,0,.4);
+    z-index:10;
+    max-width:90vw;
+    text-align:center;
+  }
+  .toast.show{ opacity:1; transform:translate(-50%, 0); }
+</style>
+</head>
+<body>
+
+  <div class="stage">
+    <div class="flip-card" id="flipCard" role="button" tabindex="0" aria-pressed="false" aria-label="Carte de visite Brûlé — appuyer pour retourner">
+      <div class="flip-inner" id="flipInner">
+
+        <!-- FRONT -->
+        <div class="face front">
+          <div class="ring-stain"></div>
+          <div class="emblem">
+            <div class="steam-wrap">
+              <span class="steam s1"></span>
+              <span class="steam s2"></span>
+              <span class="steam s3"></span>
+            </div>
+            <svg viewBox="0 0 24 24">
+              <path d="M4 9h13v5a6 6 0 0 1-6 6H10a6 6 0 0 1-6-6V9z"/>
+              <path d="M17 10c3-1 4 2 1.6 3.6-.9.6-1.6.4-1.6.4"/>
+              <path d="M2 20h18"/>
+            </svg>
+          </div>
+          <h1 class="brand">Brûlé</h1>
+          <p class="tagline">Small batch. Slow roast. Fast friends.</p>
+          <div class="front-foot">
+            <span>Tunis · Est. 2024</span>
+            <span class="flip-hint">
+              <svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+              Retourner
+            </span>
+          </div>
+        </div>
+
+        <!-- BACK -->
+        <div class="face back">
+          <div class="ring-stain"></div>
+
+          <div class="back-head">
+            <div>
+              <div class="back-brand">Brûlé</div>
+              <div class="back-role">Torréfacteur artisanal</div>
+            </div>
+            <div class="avatar">IB</div>
+          </div>
+
+          <div class="icon-row">
+            <a class="icon-btn" href="tel:+21620000000" aria-label="Appeler" onclick="event.stopPropagation()">
+              <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .8-.2 1L6.6 10.8z"/></svg>
+            </a>
+            <a class="icon-btn" href="https://wa.me/21620000000" target="_blank" rel="noopener" aria-label="WhatsApp" onclick="event.stopPropagation()">
+              <svg viewBox="0 0 24 24"><path d="M4 20l1.4-4.1A8 8 0 1 1 9 18.6L4 20z"/><path d="M9 10c0 3 2.5 5 5 5" stroke-linecap="round"/></svg>
+            </a>
+            <a class="icon-btn" href="mailto:hello@example.com" aria-label="E-mail" onclick="event.stopPropagation()">
+              <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+            </a>
+            <a class="icon-btn" href="https://example.com" target="_blank" rel="noopener" aria-label="Site web" onclick="event.stopPropagation()">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/></svg>
+            </a>
+            <a class="icon-btn" href="https://instagram.com/example" target="_blank" rel="noopener" aria-label="Instagram" onclick="event.stopPropagation()">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
+            </a>
+          </div>
+
+          <div class="info-row">
+            <div class="addr"><b>Adresse</b>12 Av. Habib Bourguiba, Tunis</div>
+            <div class="hrs"><b>Horaires</b>Lun–Ven 7h–19h<br>Sam–Dim 8h–20h</div>
+          </div>
+
+          <button class="save-btn" onclick="event.stopPropagation(); saveContact();">
+            <svg viewBox="0 0 24 24"><path d="M12 4v12M6 12l6 6 6-6"/><path d="M4 20h16"/></svg>
+            Enregistrer le contact
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <p class="hint"><b>Modèle de démonstration</b> — appuyez sur la carte pour la retourner. Remplacez le nom, les coordonnées, l'adresse, les liens et les données de la fiche contact (vCard, dans le script) par les informations réelles de votre entreprise.</p>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const card = document.getElementById('flipCard');
+
+    function toggleFlip(){
+      const flipped = card.classList.toggle('flipped');
+      card.setAttribute('aria-pressed', flipped ? 'true' : 'false');
+    }
+
+    card.addEventListener('click', toggleFlip);
+    card.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        toggleFlip();
+      }
+    });
+
+    // subtle tactile tilt on hover (skipped for touch / reduced-motion)
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if(canHover && !prefersReduced){
+      const inner = document.getElementById('flipInner');
+      card.addEventListener('mousemove', (e)=>{
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        const rx = (py * -6).toFixed(2);
+        const ry = (px * 8).toFixed(2);
+        const isFlipped = card.classList.contains('flipped');
+        const base = isFlipped ? 'rotateY(180deg)' : '';
+        inner.style.transform = `${base} rotateX(${rx}deg) rotateY(${isFlipped ? 180 - ry : ry}deg)`;
+      });
+      card.addEventListener('mouseleave', ()=>{
+        inner.style.transform = card.classList.contains('flipped') ? 'rotateY(180deg)' : '';
+      });
+    }
+
+    function showToast(msg){
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(()=> t.classList.remove('show'), 2400);
+    }
+
+    function saveContact(){
+      const vcard = [
+        'BEGIN:VCARD',
+        'VERSION:3.0',
+        'N:;Brûlé Coffee Roasters;;;',
+        'FN:Brûlé Coffee Roasters',
+        'ORG:Brûlé Coffee Roasters',
+        'TITLE:Torréfacteur artisanal',
+        'TEL;TYPE=CELL:+21620000000',
+        'EMAIL:hello@example.com',
+        'URL:https://example.com',
+        'ADR;TYPE=WORK:;;12 Avenue Habib Bourguiba;Tunis;;1001;Tunisia',
+        'NOTE:Small batch. Slow roast. Fast friends.',
+        'END:VCARD'
+      ].join('\n');
+      const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'brule-contact.vcf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Contact enregistré ✓');
+    }
+  </script>
+
+</body>
+</html>

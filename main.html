@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRÛLÉ — Carte de visite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --espresso:#241712;
+    --espresso-2:#1a110d;
+    --paper:#f0e6d2;
+    --paper-2:#e7dabd;
+    --copper:#b5651d;
+    --copper-dark:#8f4d15;
+    --ink:#2b1b14;
+    --ink-soft:#5a4a3f;
+    --sage:#6e7458;
+    --gold:#c9a227;
+    --radius:18px;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  html,body{
+    min-height:100%;
+    background:
+      radial-gradient(120% 90% at 50% -10%, #3a2418 0%, var(--espresso) 45%, var(--espresso-2) 100%);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+  }
+
+  body{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    padding:48px 16px 64px;
+  }
+
+  /* faint grain overlay */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none;
+    opacity:.05;
+    background-image:
+      repeating-linear-gradient(0deg, #fff 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(90deg, #fff 0 1px, transparent 1px 3px);
+    mix-blend-mode:overlay;
+  }
+
+  .card{
+    position:relative;
+    width:100%;
+    max-width:400px;
+    background:var(--paper);
+    border-radius:var(--radius);
+    box-shadow:
+      0 30px 60px -20px rgba(0,0,0,.6),
+      0 8px 20px -8px rgba(0,0,0,.5);
+    overflow:hidden;
+    opacity:0;
+    transform:translateY(18px);
+    animation:riseIn .7s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+
+  @keyframes riseIn{ to{opacity:1; transform:translateY(0);} }
+
+  /* perforation strips top & bottom, like a ticket */
+  .perf{
+    height:14px;
+    background:
+      radial-gradient(circle at 10px 7px, transparent 6px, var(--espresso) 6.5px) repeat-x;
+    background-size:20px 14px;
+  }
+  .perf-top{ margin-top:-1px; }
+  .perf-bottom{ margin-bottom:-1px; }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    background:linear-gradient(160deg, var(--copper) 0%, var(--copper-dark) 60%, #6d3a10 100%);
+    padding:34px 24px 26px;
+    display:flex;
+    justify-content:center;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(circle at 30% 20%, rgba(255,255,255,.18), transparent 55%);
+    pointer-events:none;
+  }
+
+  .cup-wrap{ position:relative; width:150px; height:130px; }
+
+  .steam{
+    position:absolute;
+    bottom:78px;
+    width:5px;
+    height:5px;
+    border-radius:50%;
+    background:rgba(255,255,255,.55);
+    filter:blur(4px);
+    opacity:0;
+  }
+  .steam.s1{ left:52px; animation:rise 3.2s ease-in infinite; }
+  .steam.s2{ left:68px; animation:rise 3.2s ease-in infinite 1s; }
+  .steam.s3{ left:84px; animation:rise 3.2s ease-in infinite 2s; }
+
+  @keyframes rise{
+    0%{ transform:translateY(0) scale(1); opacity:0; }
+    15%{ opacity:.65; }
+    70%{ opacity:.25; }
+    100%{ transform:translateY(-58px) scale(2.6); opacity:0; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .steam{ animation:none !important; opacity:.3; }
+    .card{ animation:none; opacity:1; transform:none; }
+  }
+
+  .badge{
+    position:absolute;
+    top:14px; right:14px;
+    width:66px; height:66px;
+    border-radius:50%;
+    background:var(--gold);
+    border:2px dashed rgba(43,27,20,.5);
+    display:flex; align-items:center; justify-content:center;
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:8.5px;
+    letter-spacing:.05em;
+    color:var(--ink);
+    line-height:1.25;
+    transform:rotate(-9deg);
+    transition:transform .4s ease;
+    box-shadow:0 4px 10px rgba(0,0,0,.25);
+  }
+  .card:hover .badge{ transform:rotate(4deg) scale(1.05); }
+
+  /* ---------- CONTENT ---------- */
+  .content{ padding:26px 26px 6px; }
+
+  .brand{
+    font-family:'Fraunces', serif;
+    font-optical-sizing:auto;
+    font-weight:600;
+    font-size:38px;
+    letter-spacing:.01em;
+    color:var(--ink);
+    text-align:center;
+  }
+  .tagline{
+    margin-top:6px;
+    text-align:center;
+    font-size:13.5px;
+    color:var(--ink-soft);
+    font-style:italic;
+  }
+
+  .divider{
+    margin:20px 0;
+    border:none;
+    border-top:1.5px dashed rgba(43,27,20,.28);
+  }
+
+  /* ---------- ACTIONS GRID ---------- */
+  .actions{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:10px;
+  }
+  .action{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:7px;
+    padding:12px 4px 10px;
+    background:var(--paper-2);
+    border:1px solid rgba(43,27,20,.12);
+    border-radius:12px;
+    text-decoration:none;
+    color:var(--ink);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:.02em;
+    transition:transform .18s ease, background .18s ease, box-shadow .18s ease;
+  }
+  .action:hover{
+    background:var(--copper);
+    color:#fff;
+    transform:translateY(-3px);
+    box-shadow:0 8px 16px -6px rgba(181,101,29,.55);
+  }
+  .action:hover svg{ stroke:#fff; }
+  .action:focus-visible{
+    outline:2.5px solid var(--sage);
+    outline-offset:2px;
+  }
+  .action svg{
+    width:20px; height:20px;
+    stroke:var(--copper-dark);
+    fill:none;
+    stroke-width:1.7;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    transition:stroke .18s ease;
+  }
+
+  /* ---------- HOURS (receipt style) ---------- */
+  .hours-title{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:10px;
+  }
+  .hour-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    color:var(--ink);
+    padding:3px 0;
+  }
+  .hour-row span:first-child{ color:var(--ink-soft); }
+
+  /* ---------- LOCATION ---------- */
+  .location p{
+    font-size:13px;
+    color:var(--ink);
+    line-height:1.5;
+    margin-bottom:12px;
+  }
+  .map-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    width:100%;
+    padding:12px;
+    background:var(--ink);
+    color:var(--paper);
+    text-decoration:none;
+    border-radius:10px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    letter-spacing:.04em;
+    transition:background .18s ease, transform .18s ease;
+  }
+  .map-btn:hover{ background:var(--sage); transform:translateY(-2px); }
+  .map-btn svg{ width:15px; height:15px; stroke:var(--paper); fill:none; stroke-width:1.8; }
+
+  /* ---------- VIDEO PLACEHOLDER ---------- */
+  .video-block{
+    margin-top:20px;
+    position:relative;
+    border-radius:12px;
+    overflow:hidden;
+    aspect-ratio:16/9;
+    background:
+      linear-gradient(135deg, #3a2418, #1a110d 70%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    border:1px solid rgba(43,27,20,.15);
+  }
+  .video-block::before{
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(circle at 70% 30%, rgba(181,101,29,.35), transparent 60%);
+  }
+  .play-btn{
+    position:relative;
+    width:50px; height:50px;
+    border-radius:50%;
+    background:var(--paper);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 18px rgba(0,0,0,.4);
+    transition:transform .2s ease;
+  }
+  .video-block:hover .play-btn{ transform:scale(1.08); }
+  .play-btn svg{ width:16px; height:16px; fill:var(--copper-dark); margin-left:2px; }
+  .video-label{
+    position:absolute;
+    bottom:10px; left:12px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:.04em;
+    color:var(--paper);
+    opacity:.85;
+  }
+
+  .footer-note{
+    text-align:center;
+    padding:22px 20px 26px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:.03em;
+    color:var(--ink-soft);
+  }
+
+  .hint{
+    margin-top:22px;
+    max-width:400px;
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    line-height:1.6;
+    color:rgba(240,230,210,.55);
+    padding:0 12px;
+  }
+  .hint b{ color:rgba(240,230,210,.85); }
+
+  /* toast */
+  .toast{
+    position:fixed;
+    left:50%; bottom:26px;
+    transform:translate(-50%, 20px);
+    background:var(--ink);
+    color:var(--paper);
+    padding:11px 18px;
+    border-radius:9px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+    box-shadow:0 10px 24px rgba(0,0,0,.4);
+    z-index:10;
+    max-width:90vw;
+    text-align:center;
+  }
+  .toast.show{ opacity:1; transform:translate(-50%, 0); }
+
+  @media (max-width:380px){
+    .brand{ font-size:32px; }
+    .badge{ width:58px; height:58px; font-size:7.5px; }
+  }
+</style>
+</head>
+<body>
+
+  <main class="card">
+    <div class="perf perf-top"></div>
+
+    <div class="hero">
+      <div class="cup-wrap">
+        <span class="steam s1"></span>
+        <span class="steam s2"></span>
+        <span class="steam s3"></span>
+        <svg viewBox="0 0 150 130" width="150" height="130">
+          <ellipse cx="60" cy="112" rx="46" ry="7" fill="rgba(0,0,0,.15)"/>
+          <path d="M20 48 h72 v34 a36 36 0 0 1 -36 36 a36 36 0 0 1 -36 -36 z" fill="#f0e6d2" stroke="#3a2418" stroke-width="2"/>
+          <path d="M92 58 c20 -6 26 14 10 22 c-6 3 -10 2 -10 2" fill="none" stroke="#f0e6d2" stroke-width="6" stroke-linecap="round"/>
+          <path d="M92 58 c20 -6 26 14 10 22 c-6 3 -10 2 -10 2" fill="none" stroke="#3a2418" stroke-width="2" stroke-linecap="round"/>
+          <ellipse cx="56" cy="50" rx="34" ry="7" fill="#3a2418"/>
+          <ellipse cx="56" cy="48" rx="30" ry="5.5" fill="#8a5a2b"/>
+        </svg>
+      </div>
+      <div class="badge">EST.<br>TUNIS<br>★ 2024</div>
+    </div>
+
+    <div class="content">
+      <h1 class="brand">Brûlé</h1>
+      <p class="tagline">Small batch. Slow roast. Fast friends.</p>
+
+      <hr class="divider">
+
+      <div class="actions">
+        <a class="action" href="tel:+21620000000">
+          <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .8-.2 1L6.6 10.8z"/></svg>
+          Appeler
+        </a>
+        <a class="action" href="mailto:hello@example.com">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+          E-mail
+        </a>
+        <a class="action" href="https://wa.me/21620000000" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M4 20l1.4-4.1A8 8 0 1 1 9 18.6L4 20z"/><path d="M9 10c0 3 2.5 5 5 5" stroke-linecap="round"/></svg>
+          WhatsApp
+        </a>
+        <a class="action" href="https://example.com" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/></svg>
+          Site web
+        </a>
+        <a class="action" href="https://instagram.com/example" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
+          Instagram
+        </a>
+        <a class="action" href="https://facebook.com/example" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M15 4h-2a4 4 0 0 0-4 4v3H7v4h2v7h4v-7h2.5L16 11h-3V8.5c0-.6.4-1 1-1H16V4z"/></svg>
+          Facebook
+        </a>
+      </div>
+
+      <hr class="divider">
+
+      <div class="hours">
+        <p class="hours-title">Horaires</p>
+        <div class="hour-row"><span>Lun&nbsp;–&nbsp;Ven</span><span>07:00 – 19:00</span></div>
+        <div class="hour-row"><span>Sam&nbsp;–&nbsp;Dim</span><span>08:00 – 20:00</span></div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="location">
+        <p>12 Avenue Habib Bourguiba, Tunis 1001</p>
+        <a class="map-btn" href="https://www.google.com/maps/search/?api=1&query=Avenue+Habib+Bourguiba%2C+Tunis" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M12 22s7-7.4 7-12a7 7 0 1 0-14 0c0 4.6 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          Ouvrir dans Maps
+        </a>
+      </div>
+
+      <div class="video-block" onclick="showToast()">
+        <div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg></div>
+        <span class="video-label">Vidéo de présentation (optionnel)</span>
+      </div>
+    </div>
+
+    <p class="footer-note">Torréfaction artisanale · Tunis</p>
+    <div class="perf perf-bottom"></div>
+  </main>
+
+  <p class="hint"><b>Modèle de démonstration</b> — remplacez le nom, les coordonnées, l'adresse, les liens et la vidéo par les informations réelles de votre entreprise.</p>
+
+  <div class="toast" id="toast">Ajoutez ici le lien de votre vidéo (YouTube, Vimeo ou MP4)</div>
+
+  <script>
+    function showToast(){
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(()=> t.classList.remove('show'), 2600);
+    }
+  </script>
+
+</body>
+</html>

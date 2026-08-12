@@ -442,6 +442,12 @@
       window._toastTimer = setTimeout(()=> t.classList.remove('show'), 2600);
     }
   </script>
+  <!-- Initialize Vercel Analytics queue -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<!-- Load the production script -->
+<script defer src="/_vercel/insights/script.js"></script>
 
 </body>
 </html>
